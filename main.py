@@ -94,4 +94,20 @@ El primer artefacto nuclear detonado fue una bomba de implosión en la prueba Tr
 
 
 texto_tokens = procesamiento_texto(texto)
-texto_tokens
+print(texto_tokens)
+
+ #### GRAFICA
+def graficar_frecuencias(frecuencias):
+    df_frecuencias = pd.DataFrame(frecuencias.items(), columns=['Palabra', 'Frecuencia'])
+    frecuencias_contadas = df_frecuencias['Frecuencia'].value_counts().reset_index()
+    frecuencias_contadas.columns = ['Frecuencia', 'Cantidad']  # Renombrar columnas para claridad
+
+    plt.figure(figsize=(20, 6))
+    sns.barplot(x='Frecuencia', y='Cantidad', data=frecuencias_contadas, palette='viridis')
+    plt.title('Distribución de Frecuencias de Palabras')
+    plt.ylabel('Cantidad de Palabras')
+    plt.xlabel('Frecuencia')
+    plt.show()
+
+frecuencias = tabla_frecuencias(texto_tokens)
+graficar_frecuencias(frecuencias)
