@@ -8,64 +8,14 @@ from collections import Counter
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-import nltk
 nltk.download('stopwords')
+import tokenizacion as tk
+import lematizacion as le
+import importlib
+importlib.reload(tk)
+importlib.reload(le)
 
 nltk.download('punkt')
-
-def palabras_numeros(texto):
-  patron = r'\b\w*[a-zA-Z]+\w*\d+\w*\b|\b\w*\d+\w*[a-zA-Z]+\w*\b'
-  palabras_con_numeros = re.findall(patron, texto)
-  palabras_limpias = [re.sub(r'\d+', '', word) for word in palabras_con_numeros]
-  diccionario = dict(zip(palabras_con_numeros, palabras_limpias))
-  for viejo, nuevo in diccionario.items():
-      texto = texto.replace(viejo, nuevo)
-  return texto
-
-def eliminar_tildes(texto):
-  return "".join(c for c in unicodedata.normalize("NFKD", texto) if not unicodedata.combining(c))
-
-def eliminar_stopwords(texto):
-    stop_words = set(stopwords.words('spanish'))
-    abecedario = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-    stop_words.update(stopwords.words('english'),abecedario)
-    patron = r'\b(?:' + '|'.join(stop_words) + r')\b'
-    texto_filtrado = re.sub(patron, '', texto, flags=re.IGNORECASE)
-    texto_filtrado = re.sub(r'\s+', ' ', texto_filtrado).strip()
-    return texto_filtrado
-
-
-def clean_text(text):
-  text = re.sub(r'\.\d+', '', text)
-  text = re.sub(r'', '', text)
-  text = re.sub(r'[^\w\s]', '', text)
-  text = re.sub(r"\n", ' ', text)
-  text = re.sub(r'(\d)\s(?=\d{3})', r'\1', text)
-  text = eliminar_tildes(text)
-  text = text.lower()
-  text = palabras_numeros(text)
-  return text
-
-def lematizar_texto(texto):
-    stemmer = SnowballStemmer('spanish')
-    texto_stemmed = [stemmer.stem(palabra) for palabra in texto]
-    return texto_stemmed
-
-def tabla_frecuencias(texto, idioma='spanish'):
-  frecuencias = Counter(texto)
-  return frecuencias
-
-
-def procesamiento_texto(texto):
-  texto_limpio = clean_text(texto)
-  texto1= eliminar_stopwords(texto_limpio)
-  tokens = word_tokenize(texto1)
-  lema = lematizar_texto(tokens)
-  frecuencias = tabla_frecuencias(lema)
-  print(frecuencias)
-  return lema
-
-texto_tokens = procesamiento_texto(texto)
 
 texto = """Robyn Rihanna Fenty (Parroquia de Saint Michael, 20 de febrero de 1988), conocida simplemente como Rihanna, es una cantante, actriz, diseñadora y empresaria barbadense. Nacida en Saint Michael y criada en Bridgetown, Barbados, Rihanna hizo una audición para el productor de discos estadounidense Evan Rogers en 2003, quien la invitó a los Estados Unidos para grabar cintas de demostración. Después de firmar con Def Jam en 2005, pronto obtuvo reconocimiento con el lanzamiento de sus dos primeros álbumes de estudio, Music of the Sun (2005) y A Girl Like Me (2006), ambos influenciados por la música caribeña y alcanzaron su punto máximo dentro de los diez primeros puestos de la lista Billboard 200 de Estados Unidos.
 
@@ -91,23 +41,9 @@ El proyecto realizó también tareas de contrainteligencia sobre el programa ale
 
 El primer artefacto nuclear detonado fue una bomba de implosión en la prueba Trinity, realizada en el campo de tiro y bombardeo de Alamogordo el 16 de julio de 1945. Otras dos bombas de tipo Little Boy y Fat Man se utilizaron respectivamente un mes después en los bombardeos atómicos de Hiroshima y Nagasaki. En los años inmediatamente posteriores a la guerra, el Proyecto Manhattan llevó a cabo varias pruebas de armamento en el atolón Bikini como parte de la operación Crossroads, desarrolló nuevas armas, promocionó el desarrollo de la red de laboratorios nacionales, apoyó la investigación médica sobre la radiología y cimentó las bases de la armada nuclear. El proyecto mantuvo el control sobre la investigación y producción de armas nucleares estadounidenses hasta la formación de la Comisión de Energía Atómica de los Estados Unidos en enero de 1947."""
 
-
-
-texto_tokens = procesamiento_texto(texto)
+texto_tokens = le.procesamiento_texto(texto)
 print(texto_tokens)
 
- #### GRAFICA
-def graficar_frecuencias(frecuencias):
-    df_frecuencias = pd.DataFrame(frecuencias.items(), columns=['Palabra', 'Frecuencia'])
-    frecuencias_contadas = df_frecuencias['Frecuencia'].value_counts().reset_index()
-    frecuencias_contadas.columns = ['Frecuencia', 'Cantidad']  # Renombrar columnas para claridad
+frecuencias = le.tabla_frecuencias(texto_tokens)
+print(le.graficar_frecuencias(frecuencias))
 
-    plt.figure(figsize=(20, 6))
-    sns.barplot(x='Frecuencia', y='Cantidad', data=frecuencias_contadas, palette='viridis')
-    plt.title('Distribución de Frecuencias de Palabras')
-    plt.ylabel('Cantidad de Palabras')
-    plt.xlabel('Frecuencia')
-    plt.show()
-
-frecuencias = tabla_frecuencias(texto_tokens)
-graficar_frecuencias(frecuencias)
