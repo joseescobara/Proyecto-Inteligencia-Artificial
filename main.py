@@ -14,6 +14,7 @@ import lematizacion as le
 import importlib
 importlib.reload(tk)
 importlib.reload(le)
+from collections import Counter
 
 nltk.download('punkt')
 
@@ -48,4 +49,29 @@ print(final_text)
 
 frecuencias = le.tabla_frecuencias(final_text)
 print(le.graficar_frecuencias(frecuencias))
+
+
+bigrams = list(nltk.bigrams(texto_tokens))
+ 
+# Contar la frecuencia de cada bigrama
+contador = Counter(bigrams)
+
+# Encontrar el bigrama más repetido y su frecuencia
+bigrama_mas_comun, frecuencia = contador.most_common(1)[0]
+print(f"El bigrama más común es '{bigrama_mas_comun}' con una frecuencia de {frecuencia}.")
+
+#mediana segun bigrama
+contador = Counter(bigrams)
+
+# Extraer las frecuencias en una lista
+frecuencias = list(contador.values())
+
+# Calcular la mediana de las frecuencias
+mediana_frecuencias = statistics.median(frecuencias)
+rango = max(frecuencias) - min(frecuencias)
+varianza = statistics.variance(frecuencias)
+desviacion_estandar = statistics.stdev(frecuencias)
+print(rango,varianza, desviacion_estandar)
+print(f"Las frecuencias de los bigramas son: {frecuencias}")
+print(f"La mediana de las frecuencias es: {mediana_frecuencias}")
 
