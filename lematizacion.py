@@ -1,4 +1,4 @@
-import tokenizacion as tk
+import tokenization as tk
 import unicodedata
 import re
 from nltk import word_tokenize
