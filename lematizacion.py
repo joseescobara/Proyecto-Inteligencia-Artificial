@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 nltk.download('stopwords')
-import tokenizacion as tk
+import tokenization as tk
 import importlib
 importlib.reload(tk)
 nltk.download('punkt')
